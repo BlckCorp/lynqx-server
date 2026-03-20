@@ -29,5 +29,5 @@
 
 ## 📬 Контакты
 - Автор: @BlckCorp
-- Telegram: [твой контакт]
+- Telegram: @LessGodblesss
 
