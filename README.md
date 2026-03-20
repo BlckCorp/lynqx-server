@@ -1,2 +1,3 @@
-# lynqx-server
-Voice chat server for Lynqx | Luna project
+# 🌙 Луна | Lynqx
+Голосовой сервис для кооп-игр (Factorio, Terraria, Captain of Industry).
+Серверная часть.
