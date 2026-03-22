@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: lynqx-db
+    restart: always
+    environment:
+      POSTGRES_USER: lynqx_user
+      POSTGRES_PASSWORD: lynqx_pass
+      POSTGRES_DB: lynqx_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

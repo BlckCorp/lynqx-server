@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  avatar    String?  // URL аватарки
+  status    String   @default("online") // online/offline
+  createdAt DateTime @default(now())
+  messages  Message[]
+  rooms     RoomMember[]
+}
+
+model Room {
+  id          String   @id @default(uuid())
+  name        String
+  type        String   @default("public") // public/private
+  password    String?  // для приватных комнат
+  createdAt   DateTime @default(now())
+  members     RoomMember[]
+  messages    Message[]
+}
+
+model RoomMember {
+  userId    String
+  roomId    String
+  joinedAt  DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
+  
+  @@id([userId, roomId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+  userId    String
+  roomId    String
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id])
+}

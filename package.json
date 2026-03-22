@@ -4,9 +4,15 @@
     "description": "Voice chat server for Luna | Lynqx project",
     "main": "src/index.js",
     "scripts": {
-      "start": "node src/index.js",
-      "dev": "nodemon src/index.js"
+        "start": "node src/index.js",
+        "dev": "nodemon src/index.js"
     },
     "author": "BlckCorp",
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "@prisma/client": "^5.22.0",
+        "express": "^5.2.1",
+        "prisma": "^5.22.0",
+        "socket.io": "^4.8.3"
+    }
 }

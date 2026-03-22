@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌙 Lynqx</title>
+    <script type="importmap">
+        {
+          "imports": {
+            "socket.io-client": "https://cdn.socket.io/4.6.1/socket.io.esm.min.js"
+          }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Экран авторизации */
+        #loginScreen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+            .login-box h1 {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+                background: linear-gradient(45deg, #a8d8ea, #ff9a9e);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .login-box input {
+                width: 100%;
+                padding: 15px;
+                margin: 20px 0;
+                border: 2px solid rgba(168, 216, 234, 0.3);
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+                font-size: 16px;
+            }
+
+            .login-box button {
+                width: 100%;
+                padding: 15px;
+                border: none;
+                border-radius: 10px;
+                background: linear-gradient(45deg, #a8d8ea, #ff9a9e);
+                color: #0f0c29;
+                font-weight: bold;
+                font-size: 16px;
+                cursor: pointer;
+                transition: transform 0.3s;
+            }
+
+                .login-box button:hover {
+                    transform: translateY(-2px);
+                }
+
+        /* Основной интерфейс */
+        #mainApp {
+            display: none;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 250px 1fr 250px;
+        }
+
+        /* Sidebar слева */
+        .sidebar-left {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .nav-item:hover {
+                background: rgba(168, 216, 234, 0.2);
+            }
+
+            .nav-item.active {
+                background: rgba(168, 216, 234, 0.3);
+            }
+
+        .room-list {
+            margin-top: 30px;
+        }
+
+        .room-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+            .room-item:hover {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+        /* Центральная часть - чат */
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid #a8d8ea;
+        }
+
+        .message-username {
+            font-weight: bold;
+            color: #a8d8ea;
+            margin-bottom: 5px;
+        }
+
+        .message-text {
+            color: #fff;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+
+            .chat-input input {
+                flex: 1;
+                padding: 15px;
+                border: 2px solid rgba(168, 216, 234, 0.3);
+                border-radius: 10px;
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+                font-size: 16px;
+            }
+
+            .chat-input button {
+                padding: 15px 30px;
+                border: none;
+                border-radius: 10px;
+                background: linear-gradient(45deg, #a8d8ea, #ff9a9e);
+                color: #0f0c29;
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+        /* Sidebar справа - пользователи */
+        .sidebar-right {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #a8d8ea, #ff9a9e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #0f0;
+        }
+
+            .user-status.offline {
+                background: #888;
+            }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #a8d8ea;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Экран входа -->
+    <div id="loginScreen">
+        <div class="login-box">
+            <h1>🌙 Lynqx</h1>
+            <p>Голосовой чат для кооп-игр</p>
+            <input type="text" id="usernameInput" placeholder="Введите никнейм" maxlength="20">
+            <button onclick="register()">Войти</button>
+        </div>
+    </div>
+
+    <!-- Основной интерфейс -->
+    <div id="mainApp" style="display: none;">
+        <!-- Левый sidebar -->
+        <div class="sidebar-left">
+            <div class="nav-item active">💬 Чаты</div>
+            <div class="nav-item">👥 Друзья</div>
+            <div class="nav-item">⚙️ Настройки</div>
+
+            <div class="room-list">
+                <h3>🏠 Комнаты</h3>
+                <div id="roomList"></div>
+                <button onclick="showCreateRoom()" style="margin-top: 10px; padding: 10px; width: 100%; border-radius: 8px; border: none; background: rgba(168, 216, 234, 0.3); cursor: pointer;">+ Создать комнату</button>
+            </div>
+        </div>
+
+        <!-- Чат -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <h2 id="currentRoomName">Выберите комнату</h2>
+            </div>
+            <div class="chat-messages" id="messages"></div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Введите сообщение..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">📤</button>
+            </div>
+        </div>
+
+        <!-- Правый sidebar - пользователи -->
+        <div class="sidebar-right">
+            <h3>👥 В комнате</h3>
+            <div id="userList"></div>
+        </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>
