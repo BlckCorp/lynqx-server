@@ -1,0 +1,12 @@
+{
+    "name": "lynqx-server",
+    "version": "1.0.0",
+    "description": "Voice chat server for Luna | Lynqx project",
+    "main": "src/index.js",
+    "scripts": {
+      "start": "node src/index.js",
+      "dev": "nodemon src/index.js"
+    },
+    "author": "BlckCorp",
+    "license": "MIT"
+}
