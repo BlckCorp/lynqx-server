@@ -1,0 +1,62 @@
+# Lynqx Docker Compose
+# Запуск: docker compose up -d
+version: '3.8'
+
+services:
+  # PostgreSQL база данных
+  postgres:
+    image: postgres:15-alpine
+    container_name: lynqx-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-lynqx}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lynqx-network
+
+  # Lynqx сервер приложения
+  app:
+    build:
+      context: ../server
+      dockerfile: Dockerfile
+    container_name: lynqx-app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-lynqx}?schema=public
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      WS_HEARTBEAT_INTERVAL: ${WS_HEARTBEAT_INTERVAL:-30000}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - lynqx-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  lynqx-network:
+    driver: bridge

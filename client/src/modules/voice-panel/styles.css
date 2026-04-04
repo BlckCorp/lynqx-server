@@ -1,0 +1,96 @@
+/* Voice Panel Module Styles */
+
+.module-container#voice-panel-module {
+  padding: 16px;
+  background: #16213e;
+  border-top: 1px solid #0f3460;
+}
+
+.voice-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.voice-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #1a1a2e;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.voice-status.connected .status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.status-text {
+  color: #eee;
+}
+
+.voice-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.control-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #1a1a2e;
+  color: #eee;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-btn:hover:not(:disabled) {
+  background: #0f3460;
+  transform: scale(1.1);
+}
+
+.control-btn.active {
+  background: #e94560;
+  color: white;
+}
+
+.control-btn.mute-btn.active {
+  background: #f59e0b;
+}
+
+.control-btn.deafen-btn.active {
+  background: #ef4444;
+}
+
+.control-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.speaking-indicator {
+  text-align: center;
+  font-size: 12px;
+  color: #4ade80;
+  animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

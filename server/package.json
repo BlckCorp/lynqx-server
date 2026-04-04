@@ -1,0 +1,34 @@
+{
+  "name": "lynqx-server",
+  "version": "1.0.0",
+  "description": "Lynqx Voice Gateway Server - Discord-like real-time communication",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "node --watch src/main.js",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:seed": "node prisma/seed.js",
+    "build": "echo 'No build step required for vanilla Node.js'"
+  },
+  "keywords": [
+    "voice",
+    "gateway",
+    "realtime",
+    "socket.io",
+    "discord"
+  ],
+  "author": "Lynqx Team",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.7.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "prisma": "^5.7.0",
+    "socket.io": "^4.6.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
