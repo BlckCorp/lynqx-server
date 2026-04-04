@@ -31,3 +31,5 @@
 - Автор: @BlckCorp
 - Telegram: @LessGodblesss
 
+---
+*Последнее обновление: Декабрь 2024*
