@@ -1,0 +1,119 @@
+// Prisma схема для Lynqx - Discord-like архитектура
+// Модель данных: Session (Guild) → Room (Channel) → User/Member
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Игровая сессия / сообщество (аналог Guild в Discord)
+model Session {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  rooms       Room[]
+  members     SessionMember[]
+  
+  @@index([name])
+}
+
+/// Комната (текстовая или голосовая)
+model Room {
+  id          String   @id @default(uuid())
+  name        String
+  type        RoomType @default(VOICE) // VOICE | TEXT
+  sessionId   String
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: CASCADE)
+  config      Json     @default("{}") // { maxUsers, bitrate, etc }
+  
+  messages    Message[]
+  members     RoomMember[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([sessionId, name])
+  @@index([sessionId])
+}
+
+enum RoomType {
+  VOICE
+  TEXT
+}
+
+/// Пользователь системы
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  avatar    String?
+  token     String   @unique // Простой токен для аутентификации
+  createdAt DateTime @default(now())
+  
+  sessions  SessionMember[]
+  messages  Message[]
+  
+  @@index([username])
+}
+
+/// Участник сессии (роль, статусы)
+model SessionMember {
+  id        String   @id @default(uuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: CASCADE)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: CASCADE)
+  role      Role     @default(MEMBER) // ADMIN | MODERATOR | MEMBER
+  muted     Boolean  @default(false)
+  deafened  Boolean  @default(false)
+  speaking  Boolean  @default(false)
+  
+  rooms     RoomMember[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([sessionId, userId])
+  @@index([userId])
+}
+
+enum Role {
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+/// Текущее присутствие пользователя в комнате
+model RoomMember {
+  id              String    @id @default(uuid())
+  roomId          String
+  room            Room      @relation(fields: [roomId], references: [id], onDelete: CASCADE)
+  sessionMemberId String
+  sessionMember   SessionMember @relation(fields: [sessionMemberId], references: [id], onDelete: CASCADE)
+  joinedAt        DateTime  @default(now())
+  
+  @@unique([roomId, sessionMemberId])
+  @@index([roomId])
+}
+
+/// Сообщение в текстовой комнате
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: CASCADE)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: CASCADE)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([roomId])
+  @@index([userId])
+}

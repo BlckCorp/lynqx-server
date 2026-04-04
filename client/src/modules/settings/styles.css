@@ -1,0 +1,94 @@
+/* Settings Module Styles */
+
+.module-container#settings-module {
+  padding: 16px;
+  background: #16213e;
+}
+
+.settings-panel h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  color: #eee;
+}
+
+.setting-item {
+  margin-bottom: 16px;
+}
+
+.setting-item label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.setting-item input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  background: #1a1a2e;
+  color: #eee;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.setting-item input[type="text"]:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+.setting-item input[type="checkbox"] {
+  margin-right: 8px;
+  accent-color: #e94560;
+}
+
+.btn-save {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #e94560;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-save:hover {
+  background: #ff6b6b;
+  transform: translateY(-1px);
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #1a1a2e;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.connection-status .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #666;
+}
+
+.connection-status.connected .status-dot {
+  background: #4ade80;
+  animation: pulse 2s infinite;
+}
+
+.connection-status.disconnected .status-dot {
+  background: #ef4444;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
